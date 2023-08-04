@@ -1,5 +1,7 @@
 package com.example.bloodpressure.data
 
+import com.example.bloodpressure.data.csv.CSVGenerationStatus
+
 sealed interface BloodPressureEvent {
     object OnAddNewRecordClicked: BloodPressureEvent
     object SaveRecord: BloodPressureEvent
@@ -21,4 +23,6 @@ sealed interface BloodPressureEvent {
     data class ArchiveRecord(val record: Record?): BloodPressureEvent
     object DeleteArchived: BloodPressureEvent
     object SetNew: BloodPressureEvent
+    object WHYYYYYYY: BloodPressureEvent
+    data class RecordUpdateStatus(val status: com.example.bloodpressure.data.RecordUpdateStatus): BloodPressureEvent
 }

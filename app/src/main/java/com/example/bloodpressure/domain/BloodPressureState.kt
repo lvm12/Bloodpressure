@@ -1,7 +1,8 @@
 package com.example.bloodpressure.domain
 
-import com.example.bloodpressure.data.CSVGenerationStatus
+import com.example.bloodpressure.data.csv.CSVGenerationStatus
 import com.example.bloodpressure.data.Record
+import com.example.bloodpressure.data.RecordUpdateStatus
 
 data class BloodPressureState(
     val records: List<Record> = emptyList(),
@@ -19,5 +20,6 @@ data class BloodPressureState(
     val isNewSelected: Boolean = false,
     val isExportedSelected: Boolean = false,
     val isArchivedSelected: Boolean = false,
-    val hasNewBeenClicked: Boolean = false
+    val hasNewBeenClicked: Boolean = false,
+    val recordUpdateStatus: RecordUpdateStatus = RecordUpdateStatus.DONE
 )

@@ -1,4 +1,4 @@
-package com.example.bloodpressure.data
+package com.example.bloodpressure.data.csv
 
 enum class CSVGenerationStatus {
     GENERATING,

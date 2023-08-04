@@ -1,29 +1,20 @@
 package com.example.bloodpressure.data.csv
 
-import android.content.ContentResolver
 import android.content.Context
-import android.net.Uri
-import android.os.Build
 import android.os.Environment
-import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import com.example.bloodpressure.data.BloodPressureEvent
-import com.example.bloodpressure.data.CSVGenerationStatus
-import com.example.bloodpressure.data.Record
 import com.example.bloodpressure.domain.BloodPressureState
 import com.example.bloodpressure.presentation.components.toDate
 import kotlinx.datetime.Clock
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.io.IOException
-import java.net.URI
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.use
 import kotlin.io.path.createFile
 import kotlin.io.path.deleteExisting
-import kotlin.io.path.exists
 
 
 class CSV (

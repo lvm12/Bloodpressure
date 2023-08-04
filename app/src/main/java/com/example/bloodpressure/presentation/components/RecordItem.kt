@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 fun Long.toDate(): String{
-    val date: Date = Date(this)
+    val date = Date(this)
     val format = SimpleDateFormat("dd.MM.yyyy")
     return format.format(date)
 }
@@ -50,7 +48,7 @@ fun RecordItem(
                     .width(20.dp)
             )
             Text(
-                text = "SBP: ${record.systolicPressure}",
+                text = "Sys: ${record.systolicPressure}",
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 18.sp
             )
@@ -59,7 +57,7 @@ fun RecordItem(
                     .width(20.dp)
             )
             Text(
-                text = "DBP: ${record.diastolicPressure}",
+                text = "Dia: ${record.diastolicPressure}",
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 18.sp
             )

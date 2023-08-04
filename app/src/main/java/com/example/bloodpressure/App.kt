@@ -1,6 +1,7 @@
 package com.example.bloodpressure
 
-import androidx.compose.material3.Text
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -10,8 +11,11 @@ import com.example.bloodpressure.domain.BloodPressureViewModel
 import com.example.bloodpressure.presentation.components.ActionsScreen
 import com.example.bloodpressure.presentation.components.AddRecord
 import com.example.bloodpressure.presentation.components.ExportAsCsvScreen
+import com.example.bloodpressure.presentation.components.LoadingScreen
 import com.example.bloodpressure.presentation.components.RecordsListScreen
+import com.example.bloodpressure.presentation.components.WHYYYYYYYY
 
+@RequiresApi(Build.VERSION_CODES.R)
 @Composable
 fun App(
     viewModel: BloodPressureViewModel
@@ -54,6 +58,16 @@ fun App(
             ActionsScreen(
                 onEvent = viewModel::onEvent
             )
+        }
+        composable(
+            route = "WHYYYYY"
+        ){
+            WHYYYYYYYY(onEvent = viewModel::onEvent)
+        }
+        composable(
+            route = "loading-screen"
+        ){
+            LoadingScreen()
         }
     }
 }

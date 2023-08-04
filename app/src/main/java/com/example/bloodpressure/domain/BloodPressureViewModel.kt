@@ -1,32 +1,28 @@
 package com.example.bloodpressure.domain
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.bloodpressure.data.BloodPressureEvent
-import com.example.bloodpressure.data.CSVGenerationStatus
+import com.example.bloodpressure.data.csv.CSVGenerationStatus
 import com.example.bloodpressure.data.Record
 import com.example.bloodpressure.data.RecordStatus
 import com.example.bloodpressure.data.csv.CSV
 import com.example.bloodpressure.data.sql.records.RecordsRepository
+import com.example.bloodpressure.data.sql.records.RecordsUpdater
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,6 +37,12 @@ class BloodPressureViewModel(
 
     private val _state = MutableStateFlow(BloodPressureState())
     private val _selectedState = MutableStateFlow(SelectedState())
+    @RequiresApi(Build.VERSION_CODES.R)
+    private val recordUpdater = RecordsUpdater(
+        repository = repository,
+        state = _state.value,
+        onEvent = this::onEvent
+    )
 
     val state = combine(
         _state,
@@ -140,15 +142,6 @@ class BloodPressureViewModel(
                     onEvent = this::onEvent
                 )
                 viewModelScope.launch {
-                    supervisorScope {
-                        repository.exportedRecords.first().forEach {
-                            async { repository.insertNewRecord(
-                                it.copy(
-                                    recordStatus = RecordStatus.ARCHIVED
-                                )
-                            ) }
-                        }
-                    }
                     csv.generateData()
                     csv.saveData(context = context)
                 }
@@ -218,12 +211,15 @@ class BloodPressureViewModel(
                 ) }
             }
             BloodPressureEvent.OnDoneClickedCSV -> {
-                navController.navigate("start-screen")
+                navController.navigate("loading-screen")
                 _selectedState.update {
                     it.copy(
                         hasNewBeenClicked = false,
                         isNewSelected = false
                     )
+                }
+                viewModelScope.launch {
+                    recordUpdater.archiveExported()
                 }
                 viewModelScope.launch {
                     delay(1000)
@@ -283,15 +279,9 @@ class BloodPressureViewModel(
 
             is BloodPressureEvent.ArchiveRecord -> {
                 if(event.record == null) {
+                    navController.navigate("loading-screen")
                     viewModelScope.launch {
-                        repository.exportedRecords.first().forEach {
-                            Log.d(TAG, "${it.id}")
-                            repository.insertNewRecord(record =
-                                it.copy(
-                                    recordStatus = RecordStatus.ARCHIVED
-                                )
-                            )
-                        }
+                        recordUpdater.archiveExported()
                     }
                 }else if(event.record.recordStatus != RecordStatus.ARCHIVED){
                     _state.update {
@@ -300,13 +290,7 @@ class BloodPressureViewModel(
                         )
                     }
                     viewModelScope.launch {
-                        _state.value.selectedRecord?.let {
-                            repository.insertNewRecord(
-                                record = it.copy(
-                                    recordStatus = RecordStatus.ARCHIVED
-                                )
-                            )
-                        }
+                        recordUpdater.archiveRecord()
                         delay(300) //Animation delay
                         _state.update {
                             it.copy(
@@ -321,13 +305,7 @@ class BloodPressureViewModel(
                         )
                     }
                     viewModelScope.launch{
-                        _state.value.selectedRecord?.let{
-                            repository.insertNewRecord(
-                                record = it.copy(
-                                    recordStatus = RecordStatus.NEW
-                                )
-                            )
-                        }
+                        recordUpdater.unArchiveRecord()
                         delay(300)
                         _state.update {
                             it.copy(
@@ -340,10 +318,7 @@ class BloodPressureViewModel(
 
             BloodPressureEvent.DeleteArchived -> {
                 viewModelScope.launch {
-                    repository.archivedRecords.first().forEach {
-                        Log.d(TAG, "${it.id}")
-                        repository.deleteRecord(it)
-                    }
+                        recordUpdater.deleteAllArchived()
                 }
             }
 
@@ -354,6 +329,20 @@ class BloodPressureViewModel(
                         isNewSelected = true
                     )
                 }
+            }
+
+            BloodPressureEvent.WHYYYYYYY -> {
+                _selectedState.update {
+                    it.copy(
+                        hasNewBeenClicked = true,
+                        isNewSelected = true
+                    )
+                }
+                navController.navigate("start-screen")
+            }
+
+            is BloodPressureEvent.RecordUpdateStatus -> {
+                navController.navigate("start-screen")
             }
         }
     }
