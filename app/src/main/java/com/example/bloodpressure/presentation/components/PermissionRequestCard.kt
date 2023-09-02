@@ -14,12 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.bloodpressure.data.BloodPressureEvent
-import com.example.bloodpressure.domain.BloodPressureState
 
 
 @Composable
 fun PermissionRequestCard(
-    state: BloodPressureState,
     onEvent:(BloodPressureEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {

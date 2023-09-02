@@ -23,6 +23,6 @@ sealed interface BloodPressureEvent {
     data class ArchiveRecord(val record: Record?): BloodPressureEvent
     object DeleteArchived: BloodPressureEvent
     object SetNew: BloodPressureEvent
-    object WHYYYYYYY: BloodPressureEvent
-    data class RecordUpdateStatus(val status: com.example.bloodpressure.data.RecordUpdateStatus): BloodPressureEvent
+    data class RecordUpdaterStatus(val status: RecordUpdateStatus): BloodPressureEvent
+    object OnGraphScreenClicked: BloodPressureEvent
 }

@@ -4,12 +4,17 @@ import android.content.Context
 import android.os.Environment
 import androidx.annotation.RequiresApi
 import com.example.bloodpressure.data.BloodPressureEvent
-import com.example.bloodpressure.domain.BloodPressureState
+import com.example.bloodpressure.data.sql.records.RecordsRepository
+import com.example.bloodpressure.domain.SelectedState
 import com.example.bloodpressure.presentation.components.toDate
+import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.use
@@ -18,14 +23,16 @@ import kotlin.io.path.deleteExisting
 
 
 class CSV (
-    private val state: BloodPressureState,
+    private val state: SelectedState,
+    private val repository: RecordsRepository,
     val onEvent: (BloodPressureEvent) -> Unit
 ){
     private var csvData: String = ""
 
-    fun generateData(){
+    suspend fun generateData(){
         csvData += "DAT, SYS, DIA, PUL\n"
-        for(i in state.records){
+        val records = repository.getRequiredRecords(state.selectedRecords).first()
+        for(i in records){
             csvData += "${i.createdAt.toDate()},"
             csvData += "${i.systolicPressure},"
             csvData += "${i.diastolicPressure},"
@@ -40,12 +47,14 @@ class CSV (
             try {
                 val path = Path(
                     path = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/BloodPressureResults/${
-                        Clock.System.now().toEpochMilliseconds().toDate()
+                        Clock.System.now().toEpochMilliseconds().fileDate()
                     }.csv"
 
                 )
                 path.createDirectories()
                 path.deleteExisting()
+
+
 
                 val root: File = path.createFile().toFile()
 
@@ -58,13 +67,11 @@ class CSV (
 
                     onEvent(BloodPressureEvent.ONCSVGenerated(CSVGenerationStatus.SUCCESSFUL))
                 } catch (e: FileNotFoundException) {
-                    e.printStackTrace()
-                    var bool: Boolean = false
+                    var bool = false
                     try {
                         path.createFile()
                         bool = true
                     } catch (ex: IOException) {
-                        ex.printStackTrace()
                     }
 
                     if (bool) {
@@ -77,4 +84,10 @@ class CSV (
                 onEvent(BloodPressureEvent.ONCSVGenerated(CSVGenerationStatus.RESTART_DEVICE))
             }
         }
+}
+
+private fun Long.fileDate(): String{
+    val date = Date(this)
+    val format = SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.ENGLISH)
+    return format.format(date)
 }

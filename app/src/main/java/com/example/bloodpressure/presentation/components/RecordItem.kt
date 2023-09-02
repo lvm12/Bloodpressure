@@ -1,5 +1,6 @@
 package com.example.bloodpressure.presentation.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,10 +20,11 @@ import com.example.bloodpressure.data.Record
 import kotlinx.datetime.Clock
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 fun Long.toDate(): String{
     val date = Date(this)
-    val format = SimpleDateFormat("dd.MM.yyyy")
+    val format = SimpleDateFormat("dd.MM.yyyy",Locale.ENGLISH)
     return format.format(date)
 }
 
@@ -32,11 +34,13 @@ fun RecordItem(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
             modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
             Text(
                 text = record.createdAt.toDate(),
@@ -48,7 +52,7 @@ fun RecordItem(
                     .width(20.dp)
             )
             Text(
-                text = "Sys: ${record.systolicPressure}",
+                text = "S: ${record.systolicPressure}",
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 18.sp
             )
@@ -57,7 +61,7 @@ fun RecordItem(
                     .width(20.dp)
             )
             Text(
-                text = "Dia: ${record.diastolicPressure}",
+                text = "D: ${record.diastolicPressure}",
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 18.sp
             )
@@ -66,7 +70,7 @@ fun RecordItem(
                     .width(20.dp)
             )
             Text(
-                text = "Pulse: ${record.pulse}",
+                text = "P: ${record.pulse}",
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 18.sp
             )

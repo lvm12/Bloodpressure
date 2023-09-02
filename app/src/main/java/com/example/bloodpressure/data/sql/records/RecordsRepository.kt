@@ -11,15 +11,7 @@ class RecordsRepository(
     val allRecords: Flow<List<Record>> = recordsDAO
         .getAllRecords()
 
-    val exportedRecords: Flow<List<Record>> = recordsDAO
-        .getExportedRecords()
-
-    val archivedRecords: Flow<List<Record>> = recordsDAO
-        .getArchivedRecords()
-
-    val newRecords: Flow<List<Record>> = recordsDAO
-        .getNewRecords()
-
+    @WorkerThread
     fun getRequiredRecords(list: List<RecordStatus>): Flow<List<Record>>{
         return recordsDAO.getSelectedRecords(list)
     }
@@ -31,5 +23,20 @@ class RecordsRepository(
     @WorkerThread
     suspend fun deleteRecord(record: Record){
         recordsDAO.deleteRecord(record)
+    }
+
+    @WorkerThread
+    suspend fun updateRecordsStatus(newStatus: RecordStatus, oldStatus: RecordStatus){
+        recordsDAO.updateRecordsStatus(newStatus, oldStatus)
+    }
+
+    @WorkerThread
+    suspend fun updateRecord(newStatus: RecordStatus, id: Long){
+        recordsDAO.updateRecord(newStatus, id)
+    }
+
+    @WorkerThread
+    suspend fun deleteRecordsByStatus(status: RecordStatus){
+        recordsDAO.deleteRecordsByStatus(status)
     }
 }

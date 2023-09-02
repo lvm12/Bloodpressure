@@ -110,6 +110,17 @@ fun ActionsScreen(
             ) {
                 Text("Delete archived records")
             }
+            Spacer(modifier = Modifier
+                .height(8.dp)
+            )
+            FilledTonalButton(
+                onClick = {
+                    onEvent(BloodPressureEvent.OnGraphScreenClicked)
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("View Graphs")
+            }
         }
         if(showSnackbar) {
             Column(

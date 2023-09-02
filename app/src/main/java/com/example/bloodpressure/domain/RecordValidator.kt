@@ -4,17 +4,17 @@ import com.example.bloodpressure.data.Record
 
 object RecordValidator {
     fun validateRecord(record: Record): ValidationResult{
-        val result = ValidationResult()
+        var result = ValidationResult()
 
-        if(record.diastolicPressure.isBlank()){result.copy(
+        if(record.diastolicPressure.isBlank()){result = result.copy(
             diastolicPressureError = "Diastolic pressure cannot be empty"
         )}
 
-        if (record.systolicPressure.isBlank()){result.copy(
+        if (record.systolicPressure.isBlank()){result =result.copy(
             systolicPressureError = "Systolic pressure cannot be empty"
         )}
 
-        if(record.pulse.isBlank()){result.copy(
+        if(record.pulse.isBlank()){result = result.copy(
             pulseError = "Pulse cannot be empty"
         )}
 

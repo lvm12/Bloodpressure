@@ -11,9 +11,9 @@ import com.example.bloodpressure.domain.BloodPressureViewModel
 import com.example.bloodpressure.presentation.components.ActionsScreen
 import com.example.bloodpressure.presentation.components.AddRecord
 import com.example.bloodpressure.presentation.components.ExportAsCsvScreen
+import com.example.bloodpressure.presentation.components.GraphScreen
 import com.example.bloodpressure.presentation.components.LoadingScreen
 import com.example.bloodpressure.presentation.components.RecordsListScreen
-import com.example.bloodpressure.presentation.components.WHYYYYYYYY
 
 @RequiresApi(Build.VERSION_CODES.R)
 @Composable
@@ -60,14 +60,17 @@ fun App(
             )
         }
         composable(
-            route = "WHYYYYY"
-        ){
-            WHYYYYYYYY(onEvent = viewModel::onEvent)
-        }
-        composable(
             route = "loading-screen"
         ){
             LoadingScreen()
+        }
+        composable(
+            route = "graph-screen"
+        ){
+            GraphScreen(
+                records = state.records,
+                onEvent = viewModel::onEvent
+            )
         }
     }
 }

@@ -11,21 +11,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import com.example.bloodpressure.data.BloodPressureEvent
+import com.example.bloodpressure.data.Record
+import com.example.bloodpressure.data.RecordStatus
 import com.example.bloodpressure.domain.BloodPressureState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -34,9 +36,6 @@ fun RecordsListScreen(
     state: BloodPressureState,
     onEvent: (BloodPressureEvent) -> Unit
 ) {
-    if(!state.hasNewBeenClicked && !state.isNewSelected){
-        onEvent(BloodPressureEvent.SetNew)
-    }
     Scaffold(
         bottomBar = {
             Button(
@@ -56,6 +55,19 @@ fun RecordsListScreen(
                 state = state,
                 onEvent = onEvent
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    onEvent(BloodPressureEvent.OnAddNewRecordClicked)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    contentDescription = "Add person",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
         }
     ) {
             Box(
@@ -71,12 +83,14 @@ fun RecordsListScreen(
                     ) {
                         item {
                             Text(
-                                text = "Records (${state.records.size}):",
+                                text = "Records (${
+                                    listChecker(state).size
+                                }):",
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
-                        items(state.records) { record ->
+                        items(listChecker(state)) { record ->
                             RecordItem(
                                 record = record,
                                 modifier = Modifier
@@ -93,5 +107,13 @@ fun RecordsListScreen(
         SelectedRecordSheet(
             record = state.selectedRecord,
             onEvent = onEvent)
+    }
+}
+
+private fun listChecker(state: BloodPressureState): List<Record>{
+    return if(state.selectedRecordStatus.containsAll(listOf( RecordStatus.NEW,RecordStatus.ARCHIVED,RecordStatus.EXPORTED))){
+        state.allRecords
+    }else{
+        state.records
     }
 }

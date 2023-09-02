@@ -2,7 +2,6 @@ package com.example.bloodpressure.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
 import kotlinx.datetime.Clock
 
 @Entity(tableName = "BloodPressureRecords")

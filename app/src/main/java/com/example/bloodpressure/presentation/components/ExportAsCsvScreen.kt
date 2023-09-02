@@ -31,7 +31,7 @@ fun ExportAsCsvScreen(
     onEvent: (BloodPressureEvent) -> Unit
 ) {
     if(!state.hasPermission){
-        PermissionRequestCard(state = state, onEvent = onEvent, modifier = Modifier.fillMaxWidth())
+        PermissionRequestCard(onEvent = onEvent, modifier = Modifier.fillMaxWidth())
     }
 
     if(state.hasPermission) {

@@ -10,9 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Archive
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.NewLabel
 import androidx.compose.material3.Button
@@ -117,19 +116,16 @@ fun SelectedRecordSheet(
                         onClick = {
                             record?.let{
                                 onEvent(
-                                    if(record.recordStatus == RecordStatus.ARCHIVED) BloodPressureEvent.ArchiveRecord(it)
-                                    else BloodPressureEvent.DeleteRecord
+                                    BloodPressureEvent.DeleteRecord
                                 )
                             }
                         }
                     ){
                         Icon(
                             imageVector =
-                                if(record?.recordStatus == RecordStatus.ARCHIVED) Icons.Rounded.Archive
-                                else Icons.Rounded.Delete,
+                                Icons.Rounded.DeleteForever,
                             contentDescription =
-                                if(record?.recordStatus == RecordStatus.ARCHIVED) "Archive record"
-                                else "Delete record"
+                                "Delete"
                         )
                         Spacer(
                             modifier = Modifier
@@ -137,8 +133,7 @@ fun SelectedRecordSheet(
                         )
                         Text(
                             text =
-                                if(record?.recordStatus == RecordStatus.ARCHIVED) "Archive record"
-                                else "Delete record"
+                                "Delete record"
                         )
                     }
                 }

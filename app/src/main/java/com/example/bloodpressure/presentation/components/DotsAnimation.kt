@@ -40,7 +40,7 @@ fun DotsPulsing(
             )
     )
 
-    val infiniteTransition = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition(label = "")
 
     @Composable
     fun animateScaleWithDelay(delay: Int) = infiniteTransition.animateFloat(
@@ -53,7 +53,7 @@ fun DotsPulsing(
                 1f at delay + delayUnit with LinearEasing
                 0f at delay + delayUnit * 2
             }
-        )
+        ), label = ""
     )
 
     val scale1 by animateScaleWithDelay(0)

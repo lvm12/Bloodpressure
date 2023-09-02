@@ -2,8 +2,6 @@ package com.example.bloodpressure.data.sql.records
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import com.example.bloodpressure.data.Record
@@ -35,4 +33,13 @@ interface RecordsDAO {
 
     @Query("SELECT * FROM BloodPressureRecords WHERE recordStatus IN (:list) ORDER BY createdAt DESC")
     fun getSelectedRecords(list: List<RecordStatus>): Flow<List<Record>>
+
+    @Query("UPDATE BloodPressureRecords SET recordStatus = :newStatus WHERE recordStatus == :oldStatus")
+    suspend fun updateRecordsStatus(newStatus: RecordStatus, oldStatus: RecordStatus)
+
+    @Query("DELETE FROM BloodPressureRecords WHERE recordStatus == :status")
+    suspend fun deleteRecordsByStatus(status: RecordStatus)
+
+    @Query("UPDATE BloodPressureRecords SET recordStatus = :newStatus WHERE id == :id")
+    suspend fun updateRecord(newStatus: RecordStatus, id: Long)
 }
