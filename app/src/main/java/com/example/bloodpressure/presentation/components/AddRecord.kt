@@ -3,10 +3,15 @@ package com.example.bloodpressure.presentation.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
@@ -37,6 +42,7 @@ fun AddRecord(
     val frSys = remember{FocusRequester()}
     val frDia = remember{FocusRequester()}
     val frPul = remember{FocusRequester()}
+    val frCom = remember {FocusRequester()}
 
     if(
         newRecord?.systolicPressure?.isBlank() == true
@@ -70,6 +76,14 @@ fun AddRecord(
         }
     }
 
+    if(
+        (newRecord?.pulse?.length ?: 0) >= 3
+    ){
+        LaunchedEffect(Unit) {
+            frCom.requestFocus()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -84,7 +98,8 @@ fun AddRecord(
         )
         Column(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .fillMaxHeight(0.55f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -93,65 +108,124 @@ fun AddRecord(
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(20.dp))
-            RecordTextField(
-                value = newRecord?.systolicPressure ?: "",
-                placeholder = "Systolic pressure",
-                error = state.systolicError,
-                onValueChanged = {
-                    onEvent(BloodPressureEvent.OnSystolicPressureChanged(it))
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(frSys)
-            )
+            Row (
+                modifier = Modifier.weight(1f)
+            ){
+                RecordTextField(
+                    value = newRecord?.systolicPressure ?: "",
+                    placeholder = "Systolic pressure",
+                    error = state.systolicError,
+                    onValueChanged = {
+                        onEvent(BloodPressureEvent.OnSystolicPressureChanged(it))
+                    },
+                    modifier = Modifier
+                        .height(10.dp)
+                        .fillMaxWidth(0.5f)
+                        .focusRequester(frSys)
+                        .weight(1f)
+                )
+                Spacer(Modifier.width(4.dp))
+                RecordTextField(
+                    value = newRecord?.diastolicPressure ?: "",
+                    placeholder = "Diastolic pressure",
+                    error = state.diastolicError,
+                    onValueChanged = {
+                        onEvent(
+                            BloodPressureEvent
+                                .OnDiastolicPressureChanged(it)
+                        )
+                    },
+                    modifier = Modifier
+                        .height(10.dp)
+                        .focusRequester(frDia)
+                        .weight(1f)
+                )
+            }
             Spacer(Modifier.height(20.dp))
-            RecordTextField(
-                value = newRecord?.diastolicPressure ?: "",
-                placeholder = "Diastolic pressure",
-                error = state.diastolicError,
-                onValueChanged = {
-                    onEvent(
-                        BloodPressureEvent
-                            .OnDiastolicPressureChanged(it)
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(frDia)
-            )
+            Row(modifier = Modifier.weight(1f)) {
+                RecordTextField(
+                    value = newRecord?.pulse ?: "",
+                    placeholder = "Pulse",
+                    error = state.pulseError,
+                    onValueChanged = {
+                        onEvent(
+                            BloodPressureEvent
+                                .OnPulseChanged(it)
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(frPul)
+                        .weight(2f)
+                )
+            }
             Spacer(Modifier.height(20.dp))
-            RecordTextField(
-                value = newRecord?.pulse ?: "",
-                placeholder = "Pulse",
-                error = state.pulseError,
-                onValueChanged = {
-                    onEvent(
-                        BloodPressureEvent
-                            .OnPulseChanged(it)
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(frPul)
-            )
+            Row(modifier = Modifier.weight(2f)) {
+                RecordTextField(
+                    value = newRecord?.comment ?: "",
+                    placeholder = "Comment",
+                    error = null,
+                    onValueChanged = {
+                        onEvent(
+                            BloodPressureEvent
+                                .OnCommentChanged(it)
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(frCom)
+                        .weight(2f)
+                )
+            }
             Spacer(Modifier.height(20.dp))
-            Button(
-                onClick = {
-                    onEvent(
-                        BloodPressureEvent.SaveRecord
+            Row(modifier = Modifier.weight(1f)) {
+                Button(
+                    onClick = {
+                        onEvent(
+                            BloodPressureEvent.SaveRecord
+                        )
+                    }
+                ) {
+                    Text(
+                        text = "Save record"
                     )
                 }
-            ){
-                Text(
-                    text = "Save record"
-                )
             }
         }
     }
 }
 
 @Composable
-private fun RecordTextField (
+private fun RowScope.RecordTextField (
+    value: String,
+    placeholder: String,
+    error: String?,
+    onValueChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column {
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChanged,
+            placeholder = {
+                Text(
+                    text = placeholder
+                )
+            },
+            modifier = modifier
+                .fillMaxWidth()
+        )
+        if(error != null){
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.RecordTextField (
     value: String,
     placeholder: String,
     error: String?,

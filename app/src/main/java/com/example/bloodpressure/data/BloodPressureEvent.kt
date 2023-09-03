@@ -13,6 +13,7 @@ sealed interface BloodPressureEvent {
     data class OnSystolicPressureChanged(val value: String): BloodPressureEvent
     data class OnDiastolicPressureChanged(val value: String): BloodPressureEvent
     data class OnPulseChanged(val value: String): BloodPressureEvent
+    data class OnCommentChanged(val value: String): BloodPressureEvent
     object OnActionsClicked: BloodPressureEvent
     object OnDoneClickedCSV: BloodPressureEvent
     data class ONCSVGenerated(val status: CSVGenerationStatus): BloodPressureEvent

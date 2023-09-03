@@ -106,6 +106,7 @@ class BloodPressureViewModel(
                     systolicPressure = "",
                     diastolicPressure = "",
                     pulse = "",
+                    comment = ""
                 )
                 navController.navigate("add-record-screen")
             }
@@ -353,6 +354,12 @@ class BloodPressureViewModel(
                         isSelectedRecordSheetOpen = false,
                     )
                 }
+            }
+
+            is BloodPressureEvent.OnCommentChanged -> {
+                newRecord = newRecord?.copy(
+                    comment = event.value
+                )
             }
         }
     }

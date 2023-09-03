@@ -11,5 +11,6 @@ data class Record(
     val diastolicPressure: String,
     val pulse: String,
     val createdAt: Long = Clock.System.now().toEpochMilliseconds(),
-    var recordStatus: RecordStatus = RecordStatus.NEW
+    var recordStatus: RecordStatus = RecordStatus.NEW,
+    val comment: String
 )

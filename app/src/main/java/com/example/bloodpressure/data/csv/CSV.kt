@@ -6,7 +6,6 @@ import androidx.annotation.RequiresApi
 import com.example.bloodpressure.data.BloodPressureEvent
 import com.example.bloodpressure.data.sql.records.RecordsRepository
 import com.example.bloodpressure.domain.SelectedState
-import com.example.bloodpressure.presentation.components.toDate
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 import java.io.File
@@ -30,13 +29,15 @@ class CSV (
     private var csvData: String = ""
 
     suspend fun generateData(){
-        csvData += "DAT, SYS, DIA, PUL\n"
+        csvData += "IND,DAT,SYS,DIA,PUL,COM\n"
         val records = repository.getRequiredRecords(state.selectedRecords).first()
-        for(i in records){
-            csvData += "${i.createdAt.toDate()},"
+        records.forEachIndexed{index, i ->
+            csvData += index.toString()
+            csvData += "${i.createdAt.toCSVDate()},"
             csvData += "${i.systolicPressure},"
             csvData += "${i.diastolicPressure},"
-            csvData += "${i.pulse}\n"
+            csvData += "${i.pulse},"
+            csvData += "${i.comment}\n"
         }
     }
 
@@ -89,5 +90,11 @@ class CSV (
 private fun Long.fileDate(): String{
     val date = Date(this)
     val format = SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.ENGLISH)
+    return format.format(date)
+}
+
+private fun Long.toCSVDate(): String{
+    val date = Date(this)
+    val format = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
     return format.format(date)
 }

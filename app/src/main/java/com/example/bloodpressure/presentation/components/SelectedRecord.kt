@@ -78,6 +78,10 @@ fun SelectedRecordSheet(
                     fontSize = 24.sp
                 )
                 Text(
+                    text = "Comment: ${record?.comment}",
+                    fontSize = 24.sp,
+                )
+                Text(
                     text = "Status: ${
                         when(record?.recordStatus){
                             RecordStatus.NEW -> "NEW"
