@@ -32,7 +32,7 @@ class CSV (
         csvData += "IND,DAT,SYS,DIA,PUL,COM\n"
         val records = repository.getRequiredRecords(state.selectedRecords).first()
         records.forEachIndexed{index, i ->
-            csvData += index.toString()
+            csvData += "${index.toString()},"
             csvData += "${i.createdAt.toCSVDate()},"
             csvData += "${i.systolicPressure},"
             csvData += "${i.diastolicPressure},"

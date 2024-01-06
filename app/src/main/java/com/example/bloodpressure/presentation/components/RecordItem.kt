@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Comment
-import androidx.compose.material.icons.rounded.CommentsDisabled
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,12 +36,12 @@ fun RecordItem(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start
     ) {
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Start
         ) {
             Text(
                 text = record.createdAt.toDate(),
@@ -51,7 +50,7 @@ fun RecordItem(
             )
             Spacer(
                 modifier = Modifier
-                    .width(20.dp)
+                    .width(15.dp)
             )
             Text(
                 text = "S: ${record.systolicPressure}",
@@ -60,7 +59,7 @@ fun RecordItem(
             )
             Spacer(
                 modifier = Modifier
-                    .width(20.dp)
+                    .width(15.dp)
             )
             Text(
                 text = "D: ${record.diastolicPressure}",
@@ -69,7 +68,7 @@ fun RecordItem(
             )
             Spacer(
                 modifier = Modifier
-                    .width(20.dp)
+                    .width(15.dp)
             )
             Text(
                 text = "P: ${record.pulse}",
@@ -79,14 +78,14 @@ fun RecordItem(
             Spacer(
                 modifier = Modifier.width(8.dp)
             )
-            Icon(
-                imageVector =
-                    if(record.comment.isNotBlank()) Icons.Rounded.Comment
-                    else Icons.Rounded.CommentsDisabled,
-                contentDescription =
-                    if(record.comment.isNotBlank()) "Comment exists"
-                    else "No comment"
-            )
+            if (record.comment.isNotBlank()) {
+                Icon(
+                    imageVector =
+                    Icons.Rounded.Comment,
+                    contentDescription =
+                    "Comment exists",
+                )
+            }
         }
         Spacer(
             modifier = modifier
