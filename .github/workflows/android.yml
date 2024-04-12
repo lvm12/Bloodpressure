@@ -1,7 +1,9 @@
 name: Android CI
 
 on: push
-permissions: write-all
+permissions: 
+    read-all
+    write-all
 
 jobs:
     build:
