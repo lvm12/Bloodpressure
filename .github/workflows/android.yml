@@ -8,4 +8,4 @@ jobs:
         name: Build APK
         runs-on: ubuntu-latest
         steps:
-            run: ./gradlew build
+            - run: ./gradlew build
