@@ -1,15 +1,15 @@
 name: Android CI
 
 on: push
-permissions: 
-    read-all
-    write-all
+
 
 jobs:
     build:
         name: Build APK
         runs-on: ubuntu-latest
         steps:
+              - name: Make gradlew executable
+                run: chmod +x ./gradlew
               - name: Checkout project sources
                 uses: actions/checkout@v4
               - name: Setup Gradle 
