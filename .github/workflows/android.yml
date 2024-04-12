@@ -9,7 +9,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
               - name: Make gradlew executable
-                run: chmod +x ./gradlew
+                run: chmod +x gradlew
               - name: Checkout project sources
                 uses: actions/checkout@v4
               - name: Setup Gradle 
