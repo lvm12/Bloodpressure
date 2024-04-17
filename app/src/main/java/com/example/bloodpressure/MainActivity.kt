@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +19,9 @@ import com.example.bloodpressure.data.sql.records.RecordsRepository
 import com.example.bloodpressure.domain.BloodPressureViewModel
 import com.example.bloodpressure.domain.BloodPressureViewModelFactory
 import com.example.bloodpressure.ui.theme.AppTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.R)
@@ -33,15 +37,8 @@ class MainActivity : ComponentActivity() {
                 application = application,
             )
             val viewModel  = ViewModelProvider(this, factory)[BloodPressureViewModel::class.java]
-
-            when(PackageManager.PERMISSION_GRANTED){
-                ContextCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) -> {
-                    viewModel.setPermissionValue(true)
-                }
-                else -> Unit
+            LaunchedEffect(key1 = database) {
+                viewModel.setPermissionValue(repository.getUri().isNotEmpty())
             }
 
             AppTheme {

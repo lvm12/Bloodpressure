@@ -2,11 +2,18 @@ package com.example.bloodpressure.data.csv
 
 import android.content.Context
 import android.os.Environment
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.net.toFile
+import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
 import com.example.bloodpressure.data.BloodPressureEvent
 import com.example.bloodpressure.data.sql.records.RecordsRepository
 import com.example.bloodpressure.domain.SelectedState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import java.io.File
 import java.io.FileNotFoundException
@@ -26,6 +33,7 @@ class CSV (
     private val repository: RecordsRepository,
     val onEvent: (BloodPressureEvent) -> Unit
 ){
+    private val TAG = "CSV"
     private var csvData: String = ""
 
     suspend fun generateData(){
@@ -37,42 +45,46 @@ class CSV (
             csvData += "${i.systolicPressure},"
             csvData += "${i.diastolicPressure},"
             csvData += "${i.pulse},"
-            csvData += "${i.comment}\n"
+            csvData += "${
+                if (i.comment.isNotEmpty()) i.comment
+                else "N/A"
+            }\n"
         }
+        Log.d(TAG, "Data is $csvData")
     }
 
     @RequiresApi(30)
     fun saveData(
         context: Context
     ) {
+        Log.d(TAG, "Entered function")
+        CoroutineScope(Dispatchers.Default).launch {
+            Log.d(TAG, "Entered Coroutine")
             try {
-                val path = Path(
-                    path = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/BloodPressureResults/${
-                        Clock.System.now().toEpochMilliseconds().fileDate()
-                    }.csv"
-
-                )
-                path.createDirectories()
-                path.deleteExisting()
-
-
-
-                val root: File = path.createFile().toFile()
-
+                Log.d(TAG, repository.getUri().toString())
+                val uri = repository.getUri()[0].uri.toUri()
+                val root = DocumentFile.fromTreeUri(context, uri) ?: throw IOException()
+                val file = root.createFile(
+                    "text/csv",
+                    Clock.System.now().toEpochMilliseconds().fileDate()
+                ) ?: throw IOException()
+                Log.d(TAG, "Created file")
                 try {
-                    val fout = root.bufferedWriter()
-
-                    fout.use {
-                        it.write(csvData)
+                    val output = context.contentResolver.openOutputStream(file.uri) ?: throw IOException()
+                    output.use {
+                        it.write(csvData.toByteArray())
                     }
-
                     onEvent(BloodPressureEvent.ONCSVGenerated(CSVGenerationStatus.SUCCESSFUL))
                 } catch (e: FileNotFoundException) {
                     var bool = false
                     try {
-                        path.createFile()
-                        bool = true
+                        bool = root.createFile(
+                            "text/csv",
+                            "${Clock.System.now().toEpochMilliseconds().fileDate()}.csv"
+                        ) != null
                     } catch (ex: IOException) {
+                        Log.d(TAG, "Failed")
+                        ex.printStackTrace()
                     }
 
                     if (bool) {
@@ -81,10 +93,13 @@ class CSV (
                         onEvent(BloodPressureEvent.ONCSVGenerated(CSVGenerationStatus.FAILED))
                     }
                 }
-            }catch (exc: java.nio.file.FileAlreadyExistsException){
+            } catch (exc: java.nio.file.FileAlreadyExistsException) {
                 onEvent(BloodPressureEvent.ONCSVGenerated(CSVGenerationStatus.RESTART_DEVICE))
+            }catch (e: Exception){
+                e.printStackTrace()
             }
         }
+    }
 }
 
 private fun Long.fileDate(): String{

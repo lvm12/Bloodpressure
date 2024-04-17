@@ -91,7 +91,7 @@ fun RecordItem(
             modifier = modifier
                 .height(4.dp)
         )
-        Row(
+        /*Row(
             modifier = Modifier.fillMaxWidth()
         ){
             Spacer(
@@ -108,10 +108,10 @@ fun RecordItem(
                 modifier = Modifier
                     .width(16.dp)
             )
-        }
-        Spacer(modifier = Modifier
+        }*/
+        /*Spacer(modifier = Modifier
             .height(4.dp)
-        )
+        )*/
     }
 }
 

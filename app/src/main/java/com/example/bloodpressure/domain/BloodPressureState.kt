@@ -1,11 +1,13 @@
 package com.example.bloodpressure.domain
 
+import android.net.Uri
 import com.example.bloodpressure.data.csv.CSVGenerationStatus
 import com.example.bloodpressure.data.Record
 import com.example.bloodpressure.data.RecordStatus
 import com.example.bloodpressure.data.RecordUpdateStatus
 
 data class BloodPressureState(
+    val uri: Uri? = null,
     val records: List<Record> = emptyList(),
     val allRecords: List<Record> = emptyList(),
     val archivedRecords: List<Record> = emptyList(),

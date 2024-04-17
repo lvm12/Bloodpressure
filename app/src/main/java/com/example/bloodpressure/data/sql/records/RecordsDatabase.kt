@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.bloodpressure.data.Record
 
-@Database(entities = [Record::class], version = 1, exportSchema = false)
+@Database(entities = [Record::class, SavedUri::class], version = 1, exportSchema = false)
 abstract class RecordsDatabase: RoomDatabase() {
     abstract fun dao(): RecordsDAO
 

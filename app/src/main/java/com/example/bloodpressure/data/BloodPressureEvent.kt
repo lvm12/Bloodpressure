@@ -1,8 +1,14 @@
 package com.example.bloodpressure.data
 
+
+import android.net.Uri
 import com.example.bloodpressure.data.csv.CSVGenerationStatus
+import com.example.bloodpressure.data.sql.records.SavedUri
 
 sealed interface BloodPressureEvent {
+    object requestPermission: BloodPressureEvent
+    object getUri: BloodPressureEvent
+    data class setUri(val uri: Uri): BloodPressureEvent
     object OnAddNewRecordClicked: BloodPressureEvent
     object SaveRecord: BloodPressureEvent
     object OnExportAsCSVClicked: BloodPressureEvent

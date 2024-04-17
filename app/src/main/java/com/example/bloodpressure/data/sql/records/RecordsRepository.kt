@@ -8,6 +8,18 @@ import kotlinx.coroutines.flow.Flow
 class RecordsRepository(
     private val recordsDAO: RecordsDAO
 ) {
+    @WorkerThread
+    suspend fun getUri(): List<SavedUri>{
+        return recordsDAO.getUri()
+    }
+    @WorkerThread
+    suspend fun deleteUri(){
+        recordsDAO.deleteUri()
+    }
+    @WorkerThread
+    suspend fun setUri(uri: SavedUri){
+        recordsDAO.setUri(uri)
+    }
     val allRecords: Flow<List<Record>> = recordsDAO
         .getAllRecords()
 

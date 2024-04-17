@@ -1,11 +1,15 @@
 package com.example.bloodpressure.domain
 
+import com.example.bloodpressure.data.csv.Permissions
 import android.app.Application
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -17,6 +21,7 @@ import com.example.bloodpressure.data.RecordUpdateStatus
 import com.example.bloodpressure.data.csv.CSV
 import com.example.bloodpressure.data.sql.records.RecordsRepository
 import com.example.bloodpressure.data.sql.records.RecordsUpdater
+import com.example.bloodpressure.data.sql.records.SavedUri
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -116,6 +121,7 @@ class BloodPressureViewModel(
                 )
             }
             BloodPressureEvent.OnExportAsCSVClicked -> {
+                onEvent(BloodPressureEvent.requestPermission)
                 _state.update { it.copy(
                     selectedRecord = null,
                     isSelectedRecordSheetOpen = false,
@@ -360,6 +366,32 @@ class BloodPressureViewModel(
                 newRecord = newRecord?.copy(
                     comment = event.value
                 )
+            }
+
+            BloodPressureEvent.getUri -> {
+                viewModelScope.launch {
+                    if (repository.getUri().isNotEmpty()) {
+                        _state.update {
+                            it.copy(
+                                uri = repository.getUri()[0].uri.toUri()
+                            )
+                        }
+                    }
+                }
+            }
+            BloodPressureEvent.requestPermission -> {
+
+            }
+            is BloodPressureEvent.setUri -> {
+                viewModelScope.launch {
+                    _state.update { it.copy(
+                        uri = event.uri
+                    ) }
+                    repository.deleteUri()
+                    repository.setUri(SavedUri(
+                        uri = event.uri.toString()
+                    ))
+                }
             }
         }
     }
